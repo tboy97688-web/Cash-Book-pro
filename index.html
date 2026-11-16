@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#153b32"><meta name="description" content="CashBook Pro">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="stylesheet" href="./styles.css">
+<title>CashBook Pro</title>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="brand-logo">C</span><span><b>CashBook Pro</b><small>إدارة أموالك بوضوح</small></span></div>
+  <button class="round-btn" id="settingsBtn" aria-label="الإعدادات">⚙</button>
+</header>
+<main class="container">
+  <section class="summary">
+    <div class="summary-head"><span>إجمالي الرصيد</span><span id="currencyLabel">جنيه مصري</span></div>
+    <div class="big-balance" id="totalBalance">0.00 <small>ج.م</small></div>
+    <div class="summary-grid">
+      <div><span class="dot in-dot"></span> إجمالي الدخل<strong id="totalIncome">0.00</strong></div>
+      <div><span class="dot out-dot"></span> إجمالي المصروفات<strong id="totalExpense">0.00</strong></div>
+    </div>
+  </section>
+
+  <section class="quick-actions">
+    <button class="quick income" id="addIncome">＋ إضافة دخل</button>
+    <button class="quick expense" id="addExpense">－ إضافة مصروف</button>
+  </section>
+
+  <section class="section-head"><div><h2>دفاتري</h2><p>قسّم أموالك حسب الاستخدام</p></div><button class="link-btn" id="newBookBtn">＋ دفتر جديد</button></section>
+  <section class="books" id="booksList"></section>
+
+  <section class="section-head recent-head"><div><h2>آخر الحركات</h2><p>أحدث العمليات المسجلة</p></div><button class="link-btn" id="showAllBtn">عرض الكل</button></section>
+  <section class="transactions" id="transactionsList"></section>
+  <div class="empty" id="emptyState" hidden><div>▤</div><b>لا توجد حركات حتى الآن</b><p>ابدأ بإضافة أول دخل أو مصروف.</p></div>
+</main>
+
+<nav class="bottom-nav">
+  <button class="active" data-tab="home"><span>⌂</span>الرئيسية</button>
+  <button data-tab="books"><span>▤</span>الدفاتر</button>
+  <button data-tab="reports"><span>▥</span>التقارير</button>
+  <button data-tab="settings"><span>⚙</span>الإعدادات</button>
+</nav>
+
+<!-- Add / edit book -->
+<div class="backdrop" id="bookBackdrop" hidden>
+ <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="bookTitle">
+  <div class="sheet-head"><div><h2 id="bookTitle">إنشاء دفتر جديد</h2><p>خصص دفتراً لتنظيم نوع محدد من أموالك</p></div><button class="round-btn close-btn" id="closeBook">✕</button></div>
+  <form id="bookForm">
+   <div class="preview" id="bookPreview"><span class="preview-icon" id="previewIcon">▤</span><span class="preview-text"><b id="previewName">دفتر جديد</b><small id="previewMeta">شخصي · جنيه مصري</small></span><small class="preview-label">معاينة</small></div>
+   <label for="bookName">اسم الدفتر <em>*</em></label><input id="bookName" maxlength="40" placeholder="مثال: مصاريف المنزل" required>
+   <label>نوع الدفتر</label>
+   <div class="type-grid" id="bookTypes">
+    <button type="button" class="type-option selected" data-type="شخصي"><span>👤</span>شخصي</button>
+    <button type="button" class="type-option" data-type="المنزل"><span>⌂</span>المنزل</button>
+    <button type="button" class="type-option" data-type="العمل"><span>▣</span>العمل</button>
+    <button type="button" class="type-option" data-type="مشروع"><span>◈</span>مشروع</button>
+   </div>
+   <label>أيقونة الدفتر</label><div class="icon-row" id="bookIcons">
+    <button type="button" class="icon-option selected" data-icon="▤">▤</button><button type="button" class="icon-option" data-icon="⌂">⌂</button><button type="button" class="icon-option" data-icon="▣">▣</button><button type="button" class="icon-option" data-icon="◈">◈</button><button type="button" class="icon-option" data-icon="♡">♡</button>
+   </div>
+   <label>لون الدفتر</label><div class="color-row" id="bookColors">
+    <button type="button" class="color-option selected" data-color="#287a63" style="--swatch:#287a63" aria-label="أخضر"></button>
+    <button type="button" class="color-option" data-color="#3976a8" style="--swatch:#3976a8" aria-label="أزرق"></button>
+    <button type="button" class="color-option" data-color="#8b63ae" style="--swatch:#8b63ae" aria-label="بنفسجي"></button>
+    <button type="button" class="color-option" data-color="#d18a35" style="--swatch:#d18a35" aria-label="برتقالي"></button>
+    <button type="button" class="color-option" data-color="#c45c68" style="--swatch:#c45c68" aria-label="وردي"></button>
+   </div>
+   <div class="two-col">
+    <div><label for="openingBalance">الرصيد الافتتاحي</label><div class="money-input"><input id="openingBalance" type="number" step="0.01" inputmode="decimal" value="0"><span>ج.م</span></div><small class="hint">الرصيد قبل بدء التسجيل</small></div>
+    <div><label for="bookStartDate">تاريخ بداية الدفتر</label><input id="bookStartDate" type="date"></div>
+   </div>
+   <label for="monthlyBudget">الميزانية الشهرية (اختياري)</label><div class="money-input"><input id="monthlyBudget" type="number" min="0" step="0.01" inputmode="decimal" placeholder="بدون حد شهري"><span>ج.م</span></div>
+   <label for="bookDescription">وصف الدفتر (اختياري)</label><textarea id="bookDescription" rows="2" maxlength="160" placeholder="اكتب الغرض من هذا الدفتر"></textarea>
+   <label class="check-line"><span><b>إظهار في الملخص الرئيسي</b><small>احتساب رصيد الدفتر ضمن إجمالي الصفحة الرئيسية</small></span><input id="includeOverview" type="checkbox" checked></label>
+   <div class="error" id="bookError" role="alert"></div>
+   <div class="form-actions"><button type="button" class="secondary-btn" id="cancelBook">إلغاء</button><button type="submit" class="primary-btn" id="saveBook">إنشاء الدفتر</button></div>
+  </form>
+ </section>
+</div>
+
+<!-- Add transaction -->
+<div class="backdrop" id="transactionBackdrop" hidden>
+ <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="transactionTitle">
+  <div class="sheet-head"><div><h2 id="transactionTitle">إضافة حركة</h2><p>سجّل الدخل أو المصروف</p></div><button class="round-btn close-btn" id="closeTransaction">✕</button></div>
+  <form id="transactionForm">
+   <div class="type-switch"><button type="button" class="selected" data-kind="in">دخل</button><button type="button" data-kind="out">مصروف</button></div>
+   <label for="transactionAmount">المبلغ <em>*</em></label><div class="money-input"><input id="transactionAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00" required><span>ج.م</span></div>
+   <label for="transactionDescription">البيان <em>*</em></label><input id="transactionDescription" maxlength="100" placeholder="مثال: مشتريات المنزل" required>
+   <label for="transactionCategory">التصنيف</label><select id="transactionCategory"><option>عام</option><option>راتب</option><option>طعام</option><option>مواصلات</option><option>فواتير</option><option>إيجار</option><option>مشتريات</option><option>صيانة</option><option>أخرى</option></select>
+   <label for="transactionBook">الدفتر</label><select id="transactionBook" required></select>
+   <label for="transactionDate">التاريخ</label><input id="transactionDate" type="date" required>
+   <label for="transactionNotes">ملاحظات</label><textarea id="transactionNotes" rows="2" placeholder="تفاصيل إضافية (اختياري)"></textarea>
+   <div class="form-actions"><button type="button" class="secondary-btn" id="cancelTransaction">إلغاء</button><button type="submit" class="primary-btn">حفظ الحركة</button></div>
+  </form>
+ </section>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="./app.js"></script>
+</body></html>

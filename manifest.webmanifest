@@ -1,0 +1,11 @@
+{
+  "name": "CashBook Pro",
+  "short_name": "CashBook",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f6f4",
+  "theme_color": "#153b32"
+}
